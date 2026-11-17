@@ -1,0 +1,28 @@
+{
+  "name": "islands",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "balance": "node tools/test.mjs tools/balance.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@waldrumpus/orb": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
+  }
+}
