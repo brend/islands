@@ -21,6 +21,12 @@ export class Visual {
   set y(y: number) {
     this.sprite.y = y;
   }
+  get width(): number {
+    return this.sprite.ready ? this.sprite.w : 8;
+  }
+  get height(): number {
+    return this.sprite.ready ? this.sprite.h : 8;
+  }
 }
 
 export class Movement {

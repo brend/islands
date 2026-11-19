@@ -1,11 +1,10 @@
-import { Scene, World, Entity } from "@waldrumpus/orb";
+import { Scene, World } from "@waldrumpus/orb";
 import { Visual, Movement, Lifetime } from "./components";
 
 export class IslandsScene implements Scene {
   private readonly world = new World();
   readonly width: number;
   readonly height: number;
-  private readonly entities: Entity[] = [];
   private readonly boatVisual = new Visual("assets/boat.png");
   private readonly waterVisual = new Visual("assets/water1.png");
 
