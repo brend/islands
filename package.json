@@ -15,7 +15,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@waldrumpus/orb": "^0.1.1"
+    "@waldrumpus/orb": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

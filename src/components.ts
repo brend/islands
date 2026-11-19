@@ -29,3 +29,7 @@ export class Movement {
     public vy: number,
   ) {}
 }
+
+export class Lifetime {
+  time: number = 0;
+}
