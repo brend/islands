@@ -2,4 +2,4 @@
 
 A relaxing experience.
 
-<img src="assets/screenshot.png" width="200">
+<img src="assets/screenshot.png" width="600">
