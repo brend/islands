@@ -1,22 +1,20 @@
-import { Scene, World } from "@waldrumpus/orb";
-import { Visual, Movement, Lifetime } from "./components";
+import { Scene, World, Entity } from "@waldrumpus/orb";
+import { Sprite, Position, Movement, Lifetime, Size } from "./components";
+import { spawnBoat, spawnCloud } from "./entities";
 
 export class IslandsScene implements Scene {
   private readonly world = new World();
   readonly width: number;
   readonly height: number;
-  private readonly boatVisual = new Visual("assets/boat.png");
-  private readonly waterVisual = new Visual("assets/water1.png");
+  private readonly boat: Entity;
+  private readonly waterSprite = new Sprite("assets/water1.png");
 
   cloudSpawnTimer = 3;
 
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
-
-    const boat = this.world.create();
-    this.world.add(boat, this.boatVisual);
-    this.world.add(boat, new Movement(3, 2));
+    this.boat = spawnBoat(this.world);
   }
 
   update(dt: number): void {
@@ -24,19 +22,19 @@ export class IslandsScene implements Scene {
 
     this.cloudSpawnTimer -= dt;
     if (this.cloudSpawnTimer <= 0) {
-      this.spawnCloud();
+      spawnCloud(this.world);
       this.cloudSpawnTimer = 2 + Math.random() * 6;
     }
 
-    this.world.each([Visual, Movement], (_, v, m) => {
+    this.world.each([Position, Movement], (_, v, m) => {
       v.x += m.vx * dt;
       v.y += m.vy * dt;
     });
 
     this.world.each([Lifetime], (_, l) => (l.time += dt));
 
-    this.world.each([Visual, Lifetime], (e, v, l) => {
-      if (this.isOffscreen(v) && l.time > 10) {
+    this.world.each([Position, Size, Lifetime], (e, p, s, l) => {
+      if (this.isOffscreen(p, s) && l.time > 10) {
         deferred.push(() => {
           console.log("destroy", e);
           this.world.destroy(e);
@@ -50,29 +48,28 @@ export class IslandsScene implements Scene {
   }
 
   private getCamera(): { x: number; y: number } {
-    const boat = this.boatVisual.sprite;
-
-    const halfWidth = boat.ready ? boat.width / boat.frameCount / 2 : 8;
-    const halfHeight = boat.ready ? boat.height : 8;
+    const position = this.world.get(this.boat, Position)!;
+    const size = this.world.get(this.boat, Size)!;
+    const halfWidth = size.width / 2;
+    const halfHeight = size.height / 2;
 
     return {
-      x: boat.x + halfWidth - this.width / 2,
-      y: boat.y + halfHeight - this.height / 2,
+      x: position.x + halfWidth - this.width / 2,
+      y: position.y + halfHeight - this.height / 2,
     };
   }
 
-  private isOffscreen(visual: Visual): boolean {
-    const sprite = visual.sprite;
+  private isOffscreen(position: Position, size: Size): boolean {
     const camera = this.getCamera();
 
-    const w = sprite.ready ? sprite.width / sprite.frameCount : 0;
-    const h = sprite.ready ? sprite.height : 0;
+    const w = size.width;
+    const h = size.height;
 
     return (
-      visual.x + w < camera.x ||
-      visual.x > camera.x + this.width ||
-      visual.y + h < camera.y ||
-      visual.y > camera.y + this.height
+      position.x + w < camera.x ||
+      position.x > camera.x + this.width ||
+      position.y + h < camera.y ||
+      position.y > camera.y + this.height
     );
   }
 
@@ -88,28 +85,14 @@ export class IslandsScene implements Scene {
 
     for (let y = startY; y < cameraY + this.height; y += tileSize) {
       for (let x = startX; x < cameraX + this.width; x += tileSize) {
-        this.waterVisual.x = x;
-        this.waterVisual.y = y;
-        this.waterVisual.render(ctx);
+        this.waterSprite.render(ctx, x, y);
       }
     }
 
-    this.world.each([Visual], (_, v) => {
-      v.render(ctx);
+    this.world.each([Position, Sprite], (_, p, v) => {
+      v.render(ctx, p.x, p.y);
     });
 
     ctx.restore();
-  }
-
-  private spawnCloud(): void {
-    const cloud = this.world.create();
-    const visual = new Visual("assets/cloud.png");
-
-    visual.x = Math.random() * 160 - 80;
-    visual.y = -16;
-
-    this.world.add(cloud, visual);
-    this.world.add(cloud, new Movement(6, 6));
-    this.world.add(cloud, new Lifetime());
   }
 }

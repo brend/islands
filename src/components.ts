@@ -1,31 +1,30 @@
-import { Sprite } from "@waldrumpus/orb";
+import { Sprite as OrbSprite } from "@waldrumpus/orb";
 
-export class Visual {
-  sprite: Sprite;
+export class Position {
+  constructor(
+    public x = 0,
+    public y = 0,
+  ) {}
+}
+
+export class Size {
+  constructor(
+    public width: number,
+    public height: number,
+  ) {}
+}
+
+export class Sprite {
+  private readonly sprite: OrbSprite;
 
   constructor(spritesheet: string, frameCount = 1) {
-    this.sprite = new Sprite(spritesheet, frameCount);
+    this.sprite = new OrbSprite(spritesheet, frameCount);
   }
-  render(ctx: CanvasRenderingContext2D): void {
-    this.sprite.render(ctx);
-  }
-  get x(): number {
-    return this.sprite.x;
-  }
-  set x(x: number) {
+
+  render(ctx: CanvasRenderingContext2D, x: number, y: number): void {
     this.sprite.x = x;
-  }
-  get y(): number {
-    return this.sprite.y;
-  }
-  set y(y: number) {
     this.sprite.y = y;
-  }
-  get width(): number {
-    return this.sprite.ready ? this.sprite.w : 8;
-  }
-  get height(): number {
-    return this.sprite.ready ? this.sprite.h : 8;
+    this.sprite.render(ctx);
   }
 }
 
